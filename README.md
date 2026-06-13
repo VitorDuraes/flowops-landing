@@ -6,14 +6,14 @@ canvas de fluxo animado, validação de formulário de lead e painel de Tweaks.
 Não tem build step. A página de produção é HTML + CSS + JS puro, sem nenhuma
 dependência em runtime. O painel de Tweaks (React via CDN) é uma ferramenta só de
 desenvolvimento e fica em `dev/`, fora da página. Para rodar: abra o
-`FlowOps Landing.html` em um servidor estático ou na extensão **Live Server** do VS Code.
+`index.html` em um servidor estático ou na extensão **Live Server** do VS Code.
 
 ---
 
 ## Estrutura dos arquivos
 
 ```
-FlowOps Landing.html      → a página (markup de todas as seções)
+index.html                → a página (markup de todas as seções)
 assets/
   styles.css              → todo o estilo + tokens de tema (variáveis CSS)
   main.js                 → interações: nav, menu mobile, FAQ, abas de preço,
@@ -57,7 +57,7 @@ notificação (e-mail/WhatsApp para o time). Retorne `200` em caso de sucesso.
 ### 2. Botões de WhatsApp
 Os botões de WhatsApp apontam para `https://wa.me/5534991775784` com mensagem
 pré-preenchida (hero, seção de contato e rodapé), abrindo em nova aba.
-Para trocar o número, procure por `wa.me/5534991775784` no `FlowOps Landing.html`.
+Para trocar o número, procure por `wa.me/5534991775784` no `index.html`.
 
 ### 3. (Opcional) Conteúdo dinâmico
 Preços, planos e textos estão fixos no HTML. Se quiser administrá-los por um
