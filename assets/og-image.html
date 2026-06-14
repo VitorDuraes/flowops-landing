@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    background: radial-gradient(1100px 700px at 78% -10%, rgba(139,92,246,.55), transparent 60%), linear-gradient(150deg, #0b0b12, #08080b);
+    color: #fff; padding: 76px 80px; display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .dots { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,.07) 1.4px, transparent 1.4px); background-size: 30px 30px; }
+  .brand { display: flex; align-items: center; gap: 18px; position: relative; }
+  .mark { width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(150deg,#a78bfa,#8b5cf6); display: grid; place-items: center; }
+  .mark svg { width: 38px; height: 38px; }
+  .brand b { font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+  .brand b span { color: #c4b5fd; }
+  .eyebrow { font-family: 'Space Mono', monospace; font-size: 19px; letter-spacing: .22em; text-transform: uppercase; color: #c4b5fd; position: relative; }
+  h1 { font-size: 82px; line-height: 1.02; font-weight: 700; letter-spacing: -.03em; max-width: 1000px; position: relative; }
+  h1 span { color: #a78bfa; }
+  .foot { display: flex; align-items: center; justify-content: space-between; position: relative; }
+  .foot p { font-size: 26px; color: #b9b9c6; max-width: 720px; line-height: 1.35; }
+  .url { font-family: 'Space Mono', monospace; font-size: 22px; color: #8b5cf6; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="dots"></div>
+  <div class="brand">
+    <span class="mark"><svg viewBox="0 0 64 64"><g stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 21 L40 32" fill="none"/><path d="M21 43 L40 32" fill="none"/></g><g fill="#fff"><circle cx="21" cy="21" r="5"/><circle cx="21" cy="43" r="5"/><circle cx="42" cy="32" r="5.5"/></g></svg></span>
+    <b>FlowOps<span> AI</span></b>
+  </div>
+  <div>
+    <div class="eyebrow">Automação · Desenvolvimento · IA</div>
+    <h1 style="margin-top:22px">Coloque sua operação <span>no automático.</span></h1>
+  </div>
+  <div class="foot">
+    <p>Automação, sistemas e IA com regra e supervisão para vender mais e perder menos lead.</p>
+    <span class="url">flowops</span>
+  </div>
+</body>
+</html>

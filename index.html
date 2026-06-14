@@ -5,10 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>FlowOps AI — Automação, Sistemas e IA para sua operação</title>
 <meta name="description" content="A FlowOps AI conecta suas ferramentas, automatiza tarefas repetitivas e usa IA com regra e supervisão. Menos trabalho manual, menos lead perdido, mais controle." />
+
+<!-- ===== SEO / social (SPEC-05). Trocar a URL base pelo domínio próprio quando existir (SPEC-04). ===== -->
+<link rel="canonical" href="https://vitorduraes.github.io/flowops-landing/" />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#8b5cf6" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="FlowOps AI" />
+<meta property="og:locale" content="pt_BR" />
+<meta property="og:title" content="FlowOps AI — Coloque sua operação no automático" />
+<meta property="og:description" content="Automação, sistemas e IA com regra e supervisão para vender mais, perder menos lead e depender menos de processo manual." />
+<meta property="og:url" content="https://vitorduraes.github.io/flowops-landing/" />
+<meta property="og:image" content="https://vitorduraes.github.io/flowops-landing/assets/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="FlowOps AI — Coloque sua operação no automático" />
+<meta name="twitter:description" content="Automação, sistemas e IA com regra e supervisão para vender mais, perder menos lead e depender menos de processo manual." />
+<meta name="twitter:image" content="https://vitorduraes.github.io/flowops-landing/assets/og-image.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="assets/styles.css" />
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfessionalService","name":"FlowOps AI","description":"Consultoria de automação de processos, desenvolvimento de sistemas sob medida e IA aplicada para pequenas e médias empresas.","url":"https://vitorduraes.github.io/flowops-landing/","image":"https://vitorduraes.github.io/flowops-landing/assets/og-image.png","areaServed":"BR","availableLanguage":"pt-BR","serviceType":["Automação de processos","Desenvolvimento de sistemas sob medida","Inteligência artificial aplicada"],"knowsAbout":["n8n","Make","CRM","WhatsApp","Integração de sistemas","Agentes de IA"],"priceRange":"$$"}
+</script>
+
+<!-- ===== Analytics (SPEC-02): crie a conta e descomente UM bloco. Os eventos de conversão já estão no main.js. ===== -->
+<!-- Plausible (recomendado): <script defer data-domain="SEU_DOMINIO" src="https://plausible.io/js/script.js"></script> -->
+<!-- GA4: <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXX')</script> -->
+
 <script src="assets/theme-store.js"></script>
 </head>
 <body>
@@ -502,6 +532,10 @@
           </div>
           <div class="form-row">
             <div class="field"><label for="f-msg">Conta um pouco (opcional)</label><textarea id="f-msg" name="mensagem" placeholder="Quais ferramentas você usa? O que mais te incomoda?"></textarea></div>
+          </div>
+          <div class="hp-field" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden">
+            <label for="f-website">Não preencha este campo</label>
+            <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
           </div>
           <div class="form-foot">
             <button type="submit" class="btn btn-primary btn-lg">Enviar e agendar diagnóstico</button>
