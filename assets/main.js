@@ -141,7 +141,7 @@
     // Enquanto LEAD_ENDPOINT estiver vazio, o formulário NÃO captura de
     // verdade: ele avisa no console e mostra sucesso, sem quebrar a página.
     // ===================================================================
-    const LEAD_ENDPOINT = ''; // <-- COLE AQUI a URL do webhook n8n / endpoint Formspree
+    const LEAD_ENDPOINT = 'https://cowboyhouse.app.n8n.cloud/webhook/flowops-lead'; // webhook n8n (SPEC-01)
 
     function readUTM() {
       const p = new URLSearchParams(window.location.search);
