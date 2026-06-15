@@ -77,12 +77,12 @@ Qualquer uma serve — o front é agnóstico:
 
 ## Tema e Tweaks
 `theme-store.js` expõe `window.FlowTheme` (get/set/toggleTheme/subscribe) e
-guarda a preferência em `localStorage` na chave `flowops:tweaks:v1`.
+guarda a preferência em `localStorage` na chave `waveops:tweaks:v1`.
 O botão de sol/lua no topo e o painel de Tweaks usam a mesma fonte de verdade.
 
 ---
 
 ## Pendências de marca
-- Marca definida: **WaveOps**, domínio **waveops.com.br** (FlowOps / Nodo / Operon / Trama estavam ocupados).
+- Marca definida: **WaveOps**, domínio **waveops.com.br**.
 - E-mail do rodapé: `contato@waveops.com.br` (configurar essa caixa de entrada).
 - Domínio próprio pendente: o `CNAME` e as URLs canônicas só mudam para `waveops.com.br` depois que o DNS apontar para o GitHub Pages.
