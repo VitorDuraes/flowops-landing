@@ -463,6 +463,8 @@ p { text-wrap: pretty; }
 .aud-chips span i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-strong); font-style: normal; }
 .aud-check { display: flex; gap: 11px; align-items: flex-start; margin-top: 14px; color: var(--muted); font-size: 14.5px; }
 .aud-check svg { width: 18px; height: 18px; color: var(--accent-strong); flex-shrink: 0; margin-top: 3px; }
+.aud-groups { display: flex; flex-direction: column; gap: 22px; }
+.aud-group-label { display: block; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin-bottom: 10px; }
 
 /* ============================================================
    FAQ
