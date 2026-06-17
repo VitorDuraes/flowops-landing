@@ -75,13 +75,21 @@
   const open = () => {
     menu.classList.add('open');
     menu.setAttribute('aria-hidden', 'false');
+    hamburger?.setAttribute('aria-expanded', 'true');
+    hamburger?.setAttribute('aria-label', 'Fechar menu');
     mobileClose?.focus();
   };
   const close = () => {
     menu.classList.remove('open');
     menu.setAttribute('aria-hidden', 'true');
+    hamburger?.setAttribute('aria-expanded', 'false');
+    hamburger?.setAttribute('aria-label', 'Abrir menu');
     hamburger?.focus();
   };
+  if (hamburger) {
+    hamburger.setAttribute('aria-controls', 'mobile-menu');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
   hamburger?.addEventListener('click', open);
   mobileClose?.addEventListener('click', close);
   menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
@@ -96,20 +104,28 @@
 
   /* ---- FAQ accordion (single open) ---- */
   const items = document.querySelectorAll('.faq-item');
-  items.forEach((item) => {
+  items.forEach((item, i) => {
     const q = item.querySelector('.faq-q');
     const a = item.querySelector('.faq-a');
+    const aid = 'faq-a-' + i;
+    a.id = aid;
+    q.setAttribute('type', 'button');
     q.setAttribute('aria-expanded', 'false');
+    q.setAttribute('aria-controls', aid);
+    a.setAttribute('aria-hidden', 'true'); // leitor de tela ignora resposta colapsada
     q.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
       items.forEach((other) => {
         other.classList.remove('open');
-        other.querySelector('.faq-a').style.maxHeight = null;
+        const oa = other.querySelector('.faq-a');
+        oa.style.maxHeight = null;
+        oa.setAttribute('aria-hidden', 'true');
         other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
       });
       if (!isOpen) {
         item.classList.add('open');
         a.style.maxHeight = a.scrollHeight + 'px';
+        a.setAttribute('aria-hidden', 'false');
         q.setAttribute('aria-expanded', 'true');
       }
     });
@@ -189,10 +205,16 @@
         ok = digits.length >= 8;
       }
       field.classList.toggle('invalid', !ok);
+      input.setAttribute('aria-invalid', String(!ok));
       return ok;
     };
-    fields.forEach((field) => {
+    fields.forEach((field, i) => {
       const input = field.querySelector('input, select');
+      const err = field.querySelector('.err');
+      if (input && err) {
+        if (!err.id) err.id = 'lead-err-' + i;
+        input.setAttribute('aria-describedby', err.id);
+      }
       input?.addEventListener('input', () => { if (field.classList.contains('invalid')) validateField(field); });
       input?.addEventListener('blur', () => validateField(field));
     });
@@ -258,6 +280,11 @@
     const clBtn = clForm.querySelector('button[type="submit"]');
     const clOk = document.getElementById('checklist-success');
     const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    const clErr = emailEl?.closest('.field')?.querySelector('.err');
+    if (emailEl && clErr) {
+      if (!clErr.id) clErr.id = 'cl-email-err';
+      emailEl.setAttribute('aria-describedby', clErr.id);
+    }
 
     function downloadChecklist() {
       const a = document.createElement('a');
@@ -285,6 +312,7 @@
       const email = (emailEl.value || '').trim();
       const okEmail = isEmail(email);
       emailEl.closest('.field').classList.toggle('invalid', !okEmail);
+      emailEl.setAttribute('aria-invalid', String(!okEmail));
       if (!okEmail) { emailEl.focus(); return; }
 
       const data = {
@@ -320,4 +348,12 @@
       }
     });
   }
+
+  /* ---- A11y: esconde SVGs decorativos dos leitores de tela.
+     Todos os icones aqui acompanham texto; os que carregam significado
+     usam aria-label/role="img" e sao preservados pelo seletor. ---- */
+  document.querySelectorAll('svg:not([aria-label]):not([role="img"])').forEach((svg) => {
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+  });
 })();

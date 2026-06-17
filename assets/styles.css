@@ -14,7 +14,7 @@
   --border-2: rgba(255, 255, 255, 0.14);
   --text: #f3f3f6;
   --muted: #9a9aa7;
-  --dim: #696974;
+  --dim: #8a8a96;
   --shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
   --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -28px rgba(0, 0, 0, 0.8);
 
@@ -48,7 +48,7 @@
   --border-2: rgba(12, 12, 20, 0.18);
   --text: #0e0e15;
   --muted: #54545f;
-  --dim: #8b8b96;
+  --dim: #5e5e6a;
   --shadow: 0 24px 60px -24px rgba(20, 20, 40, 0.22);
   --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 16px 36px -26px rgba(20, 20, 40, 0.28);
 }
@@ -94,12 +94,27 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 img, svg { display: block; }
 ::selection { background: rgba(var(--glow), 0.35); color: var(--text); }
 
+/* A11y (auditoria UI/UX): foco visível por teclado em tudo (WCAG 2.4.7).
+   Aparece só na navegação por teclado, não no clique. */
+:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+
+/* Skip link (WCAG 2.4.1): pular a navegação e ir direto ao conteúdo. */
+.skip-link {
+  position: absolute; left: 8px; top: -64px; z-index: 200;
+  background: var(--accent); color: var(--accent-ink);
+  padding: 10px 16px; border-radius: 8px;
+  font-family: var(--font-display); font-weight: 600; font-size: 14px;
+  transition: top .2s ease;
+}
+.skip-link:focus { top: 8px; }
+
 h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
 p { text-wrap: pretty; }
 
 /* ---------- Layout helpers ---------- */
 .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 24px; }
 .section { padding-block: calc(96px * var(--dscale)); position: relative; }
+section[id] { scroll-margin-top: 84px; }
 .eyebrow {
   font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.18em;
   text-transform: uppercase; color: var(--accent-strong); font-weight: 700;
@@ -134,6 +149,8 @@ p { text-wrap: pretty; }
 .btn-block { width: 100%; }
 .btn-lg { padding: 16px 28px; font-size: 16.5px; }
 .btn svg { width: 17px; height: 17px; }
+.btn:disabled, .btn[disabled] { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn:disabled:hover, .btn[disabled]:hover { transform: none; box-shadow: none; }
 
 .pill {
   display: inline-flex; align-items: center; gap: 8px; padding: 6px 13px;
@@ -194,7 +211,7 @@ p { text-wrap: pretty; }
 .nav-actions { display: flex; align-items: center; gap: 10px; }
 
 .icon-btn {
-  width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center;
   border: 1px solid var(--border-2); background: var(--surface); color: var(--text);
   transition: border-color .2s ease, color .2s ease, transform .2s ease;
 }
@@ -558,6 +575,7 @@ p { text-wrap: pretty; }
 
 /* A11y (SPEC-11): respeita "reduzir movimento" desligando as animações decorativas infinitas. */
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .flow-canvas,
   .hero-visual,
   .flow-bar .live i,
