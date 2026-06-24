@@ -1,0 +1,24 @@
+# Banco de dados local do WaveOps Portal (desenvolvimento).
+# Subir:  docker compose up -d
+# Parar:  docker compose down   (use -v para apagar os dados)
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: waveops-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: waveops
+      POSTGRES_PASSWORD: waveops
+      POSTGRES_DB: waveops
+    ports:
+      - "55432:5432"
+    volumes:
+      - waveops_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U waveops -d waveops"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  waveops_pgdata:

@@ -1,0 +1,243 @@
+// WaveOps Portal - schema Prisma (PREPARADO, ainda nao conectado).
+// Modelo de dados da secao 10 do handoff. No MVP a interface usa dados mockados
+// em src/lib/data.ts. Para ativar depois:
+//   1. npm i -D prisma && npm i @prisma/client
+//   2. preencher DATABASE_URL no .env
+//   3. npx prisma migrate dev
+// Observacao de produto: alertas internos via Discord (no lugar do Slack) e
+// tarefas de onboarding/suporte via Trello (no lugar do ClickUp).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  customer
+  admin
+  finance
+  support
+  commercial
+}
+
+enum CustomerStatus {
+  lead
+  aguardando
+  ativo
+  pendente
+  vencido
+  pausado
+  cancelado
+}
+
+enum SubscriptionStatus {
+  ativo
+  pendente
+  vencido
+  pausado
+  cancelado
+}
+
+enum InvoiceStatus {
+  criada
+  em_aberto
+  paga
+  vencida
+  cancelada
+  estornada
+  reembolsada
+}
+
+enum PaymentMethod {
+  pix
+  cartao
+  boleto
+}
+
+enum FollowupType {
+  before_7_days
+  before_3_days
+  due_today
+  overdue_1_day
+  overdue_3_days
+  overdue_7_days
+}
+
+enum FollowupChannel {
+  whatsapp
+  email
+  discord
+}
+
+enum FollowupStatus {
+  agendado
+  enviado
+  falhou
+}
+
+enum TicketPriority {
+  baixa
+  media
+  alta
+}
+
+enum TicketStatus {
+  aberto
+  em_andamento
+  resolvido
+  fechado
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String?   @map("password_hash")
+  role         UserRole  @default(customer)
+  customer     Customer?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Customer {
+  id                String          @id @default(cuid())
+  userId            String?         @unique @map("user_id")
+  user              User?           @relation(fields: [userId], references: [id])
+  name              String? // nome da pessoa de contato
+  companyName       String          @map("company_name")
+  document          String?
+  phone             String?
+  email             String
+  status            CustomerStatus  @default(lead)
+  // Senha do cliente (scrypt). Null = conta ainda nao ativada (lead so paga,
+  // recebe e-mail de ativacao e define a senha). Login por e-mail ou documento.
+  passwordHash      String?         @map("password_hash")
+  gatewayCustomerId String?         @map("gateway_customer_id")
+  // Snapshot de exibicao (MVP). A fonte normalizada das transacoes continua
+  // sendo subscriptions/invoices; estes campos facilitam listar/dashboard.
+  planLabel         String?         @map("plan_label")
+  monthlyAmount     Int?            @map("monthly_amount")
+  nextDueDate       DateTime?       @map("next_due_date")
+  lastPaymentDate   DateTime?       @map("last_payment_date")
+  paymentMethod     PaymentMethod?  @map("payment_method")
+  subscriptions     Subscription[]
+  invoices          Invoice[]
+  followups         Followup[]
+  tickets           SupportTicket[]
+  brief             ProjectBrief?
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  @@map("customers")
+}
+
+model Plan {
+  id             String         @id @default(cuid())
+  name           String
+  description    String?
+  price          Int // valor mensal em centavos
+  billingCycle   String         @map("billing_cycle")
+  maxAutomations Int?           @map("max_automations")
+  supportLevel   String?        @map("support_level")
+  isActive       Boolean        @default(true) @map("is_active")
+  subscriptions  Subscription[]
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  @@map("plans")
+}
+
+model Subscription {
+  id                    String             @id @default(cuid())
+  customerId            String             @map("customer_id")
+  customer              Customer           @relation(fields: [customerId], references: [id])
+  planId                String             @map("plan_id")
+  plan                  Plan               @relation(fields: [planId], references: [id])
+  status                SubscriptionStatus @default(pendente)
+  startDate             DateTime?          @map("start_date")
+  nextDueDate           DateTime?          @map("next_due_date")
+  canceledAt            DateTime?          @map("canceled_at")
+  pausedAt              DateTime?          @map("paused_at")
+  gatewaySubscriptionId String?            @map("gateway_subscription_id")
+  invoices              Invoice[]
+  createdAt             DateTime           @default(now()) @map("created_at")
+  updatedAt             DateTime           @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id               String         @id @default(cuid())
+  customerId       String         @map("customer_id")
+  customer         Customer       @relation(fields: [customerId], references: [id])
+  subscriptionId   String?        @map("subscription_id")
+  subscription     Subscription?  @relation(fields: [subscriptionId], references: [id])
+  amount           Int // valor em centavos
+  dueDate          DateTime       @map("due_date")
+  paidAt           DateTime?      @map("paid_at")
+  status           InvoiceStatus  @default(criada)
+  paymentMethod    PaymentMethod? @map("payment_method")
+  paymentLink      String?        @map("payment_link")
+  gatewayPaymentId String?        @unique @map("gateway_payment_id")
+  followups        Followup[]
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@map("invoices")
+}
+
+model Followup {
+  id           String          @id @default(cuid())
+  customerId   String          @map("customer_id")
+  customer     Customer        @relation(fields: [customerId], references: [id])
+  invoiceId    String?         @map("invoice_id")
+  invoice      Invoice?        @relation(fields: [invoiceId], references: [id])
+  type         FollowupType
+  channel      FollowupChannel
+  message      String?
+  status       FollowupStatus  @default(agendado)
+  sentAt       DateTime?       @map("sent_at")
+  errorMessage String?         @map("error_message")
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  @@map("followups")
+}
+
+// Briefing do projeto que o cliente quer (capturado na primeira entrada na area
+// logada, apos o pagamento). Vira um card de projeto no Trello e fica visivel no
+// admin. Um por cliente (customerId @unique); novo envio sobrescreve (upsert).
+model ProjectBrief {
+  id           String   @id @default(cuid())
+  customerId   String   @unique @map("customer_id")
+  customer     Customer @relation(fields: [customerId], references: [id])
+  goal         String // o que o cliente quer automatizar/construir
+  currentTool  String?  @map("current_tool") // ferramenta/stack usada hoje
+  pain         String? // dor principal
+  volume       String? // volume estimado por mes
+  trelloCardId String?  @map("trello_card_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("project_briefs")
+}
+
+model SupportTicket {
+  id            String         @id @default(cuid())
+  customerId    String         @map("customer_id")
+  customer      Customer       @relation(fields: [customerId], references: [id])
+  title         String
+  description   String?
+  priority      TicketPriority @default(media)
+  status        TicketStatus   @default(aberto)
+  trelloCardId  String?        @map("trello_card_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  @@map("support_tickets")
+}

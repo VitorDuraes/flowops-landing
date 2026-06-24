@@ -1,0 +1,31 @@
+# dependencias
+/node_modules
+
+# build do next
+/.next
+/out
+/build
+
+# tipos gerados
+next-env.d.ts
+*.tsbuildinfo
+
+# ambiente
+.env
+.env*.local
+
+# prisma (cliente gerado, quando conectar)
+/src/generated
+
+# landing sincronizada da raiz do repo (gerada por scripts/sync-landing.mjs)
+/public/landing.html
+/public/assets/
+
+# playwright (e2e)
+/test-results
+/playwright-report
+/playwright/.cache
+
+# OS
+.DS_Store
+Thumbs.db
