@@ -45,6 +45,9 @@ export interface PaymentGateway {
   createSubscription(input: CreateSubscriptionInput): Promise<CreateSubscriptionResult>;
   verifyWebhook(req: WebhookRequest): Promise<boolean>;
   parseWebhook(req: WebhookRequest): Promise<NormalizedWebhookEvent>;
+  // Opcional: lista os pagamentos aprovados recentes para reconciliacao. Rede de
+  // seguranca para quando o webhook nao chega (banco pausado, app dormindo, 5xx).
+  searchRecentApproved?(sinceDays?: number): Promise<NormalizedWebhookEvent[]>;
 }
 
 /* ------------------------------------------------------------------ */
@@ -224,6 +227,47 @@ const mercadoPagoGateway: PaymentGateway = {
       gatewaySubscriptionId: kind === "subscription" ? payload.data?.id : undefined,
       raw: payload,
     };
+  },
+  // Reconciliacao: busca pagamentos aprovados dos ultimos `sinceDays` dias e devolve
+  // so os do portal (external_reference "wo_..."). O repo aplica de forma idempotente,
+  // entao reaplicar um pagamento ja baixado e no-op.
+  async searchRecentApproved(sinceDays = 7) {
+    if (!env.mercadopago.accessToken) return [];
+    const end = new Date();
+    const begin = new Date(end.getTime() - sinceDays * 24 * 60 * 60 * 1000);
+    const url = new URL("https://api.mercadopago.com/v1/payments/search");
+    url.searchParams.set("sort", "date_created");
+    url.searchParams.set("criteria", "desc");
+    url.searchParams.set("range", "date_created");
+    url.searchParams.set("begin_date", begin.toISOString());
+    url.searchParams.set("end_date", end.toISOString());
+    url.searchParams.set("status", "approved");
+    url.searchParams.set("limit", "100");
+    type MpPayment = { id?: number | string; status?: string; external_reference?: string; transaction_amount?: number };
+    let results: MpPayment[] = [];
+    try {
+      const r = await fetch(url, { headers: { Authorization: `Bearer ${env.mercadopago.accessToken}` } });
+      if (!r.ok) {
+        log.warn("mercadopago.search_falhou", { httpStatus: r.status });
+        return [];
+      }
+      const data = (await r.json()) as { results?: MpPayment[] };
+      results = data.results || [];
+    } catch (e) {
+      log.warn("mercadopago.search_erro", { erro: (e as Error).message });
+      return [];
+    }
+    return results
+      .filter((p) => (p.external_reference || "").startsWith("wo_"))
+      .map((p) => ({
+        provider: "mercadopago",
+        kind: "payment" as const,
+        status: p.status || "unknown",
+        gatewayPaymentId: p.id != null ? String(p.id) : undefined,
+        gatewaySubscriptionId: p.external_reference || undefined,
+        amountCents: p.transaction_amount != null ? Math.round(p.transaction_amount * 100) : undefined,
+        raw: p,
+      }));
   },
 };
 

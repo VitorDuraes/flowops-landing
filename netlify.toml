@@ -1,0 +1,15 @@
+# Deploy do WaveOps Portal (Next.js 15) no Netlify free.
+# O app vive em portal/. A landing (index.html + assets/ na raiz do repo) e copiada
+# para portal/public/ pelo prebuild (scripts/sync-landing.mjs) e servida em "/" via
+# rewrite do next.config.mjs. Mesma origem para landing, checkout, /cliente, /admin
+# e os webhooks. Runbook completo em docs/deploy-netlify-supabase.md.
+[build]
+  base = "portal"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Runtime oficial do Next no Netlify (App Router + funcoes Node, runtime Node).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

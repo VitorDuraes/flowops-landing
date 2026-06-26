@@ -13,7 +13,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // DATABASE_URL: em producao (Supabase) e a string do pooler (porta 6543,
+  // transaction mode, ?pgbouncer=true). Local = conexao direta do Docker.
+  url       = env("DATABASE_URL")
+  // DIRECT_URL: conexao direta (porta 5432) usada pelas migrations. Local = igual.
+  directUrl = env("DIRECT_URL")
 }
 
 enum UserRole {

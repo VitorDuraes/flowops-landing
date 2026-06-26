@@ -1,8 +1,12 @@
 import "server-only";
 import { env } from "./env";
 import { getPrisma } from "./db";
+import { getRepo } from "./repo";
+import { getGateway } from "./payments";
+import { onPaymentApplied } from "./onboarding";
 import { notifyDiscord, sendEmail } from "./integrations";
 import { fireAndForget, upsertEmpresa, createFollowup, createChamado } from "./twenty";
+import { log } from "./log";
 
 export interface DunningStep {
   window: string;
@@ -164,4 +168,45 @@ export async function runDunning(): Promise<DunningResult> {
 function signed(offset: number): string {
   if (offset === 0) return "0";
   return offset < 0 ? `${offset}d` : `+${offset}d`;
+}
+
+export interface ReconcileResult {
+  mode: "mock" | "db";
+  checked: number;
+  applied: number;
+}
+
+// Reconciliacao do gateway: rede de seguranca para quando o webhook nao chega
+// (banco pausado, app dormindo, 5xx). Busca os pagamentos aprovados recentes no
+// gateway e aplica os que faltam. Idempotente: o repo ignora os ja baixados, e o
+// onPaymentApplied so reenvia o e-mail/alerta se o cliente ainda nao ativou.
+export async function runReconcile(sinceDays = 7): Promise<ReconcileResult> {
+  if (!env.hasDb()) return { mode: "mock", checked: 0, applied: 0 };
+  const gateway = getGateway();
+  if (!gateway.searchRecentApproved) {
+    log.info("reconcile.sem_busca", { gateway: gateway.id });
+    return { mode: "db", checked: 0, applied: 0 };
+  }
+  const events = await gateway.searchRecentApproved(sinceDays);
+  let applied = 0;
+  for (const ev of events) {
+    const result = await getRepo().applyGatewayPayment({
+      gatewayPaymentId: ev.gatewayPaymentId,
+      gatewaySubscriptionId: ev.gatewaySubscriptionId,
+      status: ev.status,
+      amountCents: ev.amountCents,
+    });
+    if (result.applied) {
+      applied++;
+      log.info("reconcile.fatura_baixada", {
+        invoiceId: result.invoiceId,
+        customerId: result.customerId,
+        paymentId: ev.gatewayPaymentId,
+        ref: ev.gatewaySubscriptionId,
+      });
+      await onPaymentApplied(result, "reconcile");
+    }
+  }
+  log.info("reconcile.done", { checked: events.length, applied });
+  return { mode: "db", checked: events.length, applied };
 }

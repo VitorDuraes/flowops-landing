@@ -89,6 +89,12 @@ function assertProdEnv(): void {
   if (env.paymentGateway === "mercadopago" && !env.mercadopago.webhookSecret) {
     problems.push("MERCADOPAGO_WEBHOOK_SECRET ausente (webhooks serao rejeitados em producao)");
   }
+  // Gateway real sem banco = pagamentos nao seriam persistidos (o repo cairia em
+  // mock e o webhook responderia 200 sem baixar a fatura, fazendo o MP parar de
+  // reenviar). Em producao, gateway real exige DATABASE_URL.
+  if (env.paymentGateway !== "mock" && !env.databaseUrl) {
+    problems.push("DATABASE_URL ausente com PAYMENT_GATEWAY real (pagamentos nao seriam persistidos)");
+  }
   if (problems.length) {
     throw new Error("[env] Configuracao insegura em producao:\n- " + problems.join("\n- "));
   }

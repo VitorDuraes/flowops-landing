@@ -2,8 +2,8 @@ import { NextRequest } from "next/server";
 import { ok, err } from "@/server/http";
 import { getGateway } from "@/server/payments";
 import { getRepo } from "@/server/repo";
-import { notifyDiscord, sendEmail, notifyTeamNewCustomer } from "@/server/integrations";
-import { env } from "@/server/env";
+import { notifyDiscord } from "@/server/integrations";
+import { onPaymentApplied } from "@/server/onboarding";
 import { log } from "@/server/log";
 
 // Webhook do gateway: valida assinatura, normaliza o evento e registra.
@@ -56,36 +56,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pro
         paymentId: event.gatewayPaymentId,
         ref: event.gatewaySubscriptionId,
       });
-      await notifyDiscord(`Pagamento confirmado · fatura ${result.invoiceId} quitada e cliente reativado.`);
-      // Onboarding: se o cliente ainda nao tem senha, envia o e-mail de ativacao
-      // (link para definir a senha) ancorado no e-mail do cadastro.
-      if (result.customerId) {
-        const target = await getRepo().getActivationTarget(result.customerId);
-        if (target) {
-          // Fluxo: cliente acessa a ativacao, informa o e-mail, recebe o codigo e cria a senha.
-          const link = new URL("/cliente/ativar", env.appUrl).toString();
-          await sendEmail(
-            target.email,
-            "Pagamento confirmado · ative sua conta WaveOps",
-            `Recebemos seu pagamento. Crie sua senha de acesso em: ${link}`
-          );
-          log.info("ativacao.email_enviado", { customerId: result.customerId, email: target.email });
-          // Onboarding manual: avisa o time com os dados + link wa.me pronto para
-          // abrir a conversa e ja falar do projeto (so no primeiro pagamento).
-          const cust = await getRepo().getCustomerById(result.customerId);
-          if (cust) {
-            await notifyTeamNewCustomer({
-              name: cust.name,
-              company: cust.company,
-              plan: cust.plan,
-              amountReais: cust.amount,
-              phone: cust.phone,
-              email: cust.email,
-            });
-            log.info("onboarding.time_notificado", { customerId: result.customerId });
-          }
-        }
-      }
+      // Efeitos pos-pagamento (Discord + e-mail de ativacao + alerta do time),
+      // compartilhados com o job de reconciliacao (a rede de seguranca do webhook).
+      await onPaymentApplied(result, "webhook");
     } else {
       // Nao aplicou: pode ser status nao-aprovado, reenvio idempotente ou sem match.
       log.info("webhook.nao_aplicado", {
