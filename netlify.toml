@@ -17,3 +17,13 @@
 # Runtime oficial do Next no Netlify (App Router + funcoes Node, runtime Node).
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# A landing estatica (public/landing.html, sincronizada da raiz pelo prebuild) e
+# servida em "/". O rewrite do next.config funciona no `next start` (dev), mas no
+# runtime do Netlify o "/" cai no app Next e da 404. Forcamos aqui com um rewrite
+# nativo (status 200 = serve sem mudar a URL; force = vence a rota do Next).
+[[redirects]]
+  from = "/"
+  to = "/landing.html"
+  status = 200
+  force = true
