@@ -6,10 +6,10 @@
 [build]
   base = "portal"
   command = "npm run build"
-  # O Next Runtime publica a pasta .next. O publish e relativo a RAIZ do repo
-  # (por isso "portal/.next"), e nao pode ser igual ao base ("portal"), senao o
-  # plugin falha com "publish directory cannot be the same as the base directory".
-  publish = "portal/.next"
+  # O Next Runtime publica a pasta .next. No netlify.toml o publish e relativo ao
+  # BASE ("portal"), entao o valor correto e ".next" (resolve para portal/.next).
+  # Nao pode ser igual ao base, nem "portal/.next" (viraria portal/portal/.next).
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
