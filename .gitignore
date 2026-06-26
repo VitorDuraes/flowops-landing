@@ -14,3 +14,12 @@ docs/specs/
 
 # Workflows n8n (locais, nao publicar)
 n8n/
+
+# Dependencias e config local de ferramentas (nao publicar)
+node_modules/
+.claude/
+
+# Instalacao acidental de npm na raiz (a landing nao usa package manager;
+# as deps reais ficam em portal/). Nao publicar.
+/package.json
+/package-lock.json

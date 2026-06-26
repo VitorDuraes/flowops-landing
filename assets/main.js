@@ -12,20 +12,16 @@
   const MIN_FILL_MS = 1200;
   const fillTimeMs = () => Date.now() - pageLoadedAt;
 
-  /* ---- Analytics helper (SPEC-02). No-op até você ativar Plausible/GA no <head>. ---- */
+  /* ---- Analytics helper (SPEC-02). No-op até o Plausible carregar no <head>. ---- */
   function track(event, props) {
     try {
       if (window.plausible) window.plausible(event, { props: props || {} });
-      if (typeof window.gtag === 'function') window.gtag('event', event, props || {});
     } catch (e) {}
   }
 
   // ===================================================================
   // PONTO DE INTEGRAÇÃO COM O BACK-END (SPEC-01)
-  // Webhook n8n compartilhado pelos dois formulários (lead principal e
-  // checklist). O campo "origem" diferencia de onde veio o lead.
-  // Enquanto LEAD_ENDPOINT estiver vazio, nada é enviado: avisa no
-  // console e segue o fluxo de sucesso, sem quebrar a página.
+  // Webhook n8n do formulário de lead. O campo "origem" diferencia a fonte.
   // ===================================================================
   const LEAD_ENDPOINT = 'https://cowboyhouse.app.n8n.cloud/webhook/flowops-lead';
 
@@ -40,10 +36,6 @@
   }
 
   async function submitLead(data) {
-    if (!LEAD_ENDPOINT) {
-      console.warn('[WaveOps] LEAD_ENDPOINT não configurado: o lead NÃO foi enviado. Configure em assets/main.js (SPEC-01).', data);
-      return;
-    }
     const res = await fetch(LEAD_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -265,6 +257,38 @@
     });
   });
 
+  /* ---- Entrada do hero no carregamento (sequência curta de fade + slide).
+     A classe .hero-anim no <html> dispara a animação CSS uma vez, logo no load.
+     Em "reduzir movimento" o CSS neutraliza tudo (conteúdo aparece estático). ---- */
+  document.documentElement.classList.add('hero-anim');
+
+  /* ---- Stagger: marca grupos de itens para entrarem em cascata. Cada filho
+     recebe a variável --i (índice), e o CSS aplica um atraso incremental
+     quando o container fica visível. Aproveita o mesmo mecanismo de reveal:
+     o container ganha .reveal e .stagger, e o .is-visible libera os filhos. ---- */
+  const staggerGroups = [
+    '.pillars',         // cards de serviços
+    '.plans',           // cards de pacotes
+    '.steps',           // passos do "como funciona"
+    '.faq',             // perguntas
+    '.included-list',   // o que entra todo mês
+    '.aud-groups',      // grupos de público
+    '.cta-points',      // bullets do CTA
+    '.testi-grid',      // depoimentos (prova social)
+  ];
+  staggerGroups.forEach((sel) => {
+    document.querySelectorAll(sel).forEach((group) => {
+      group.classList.add('reveal', 'stagger');
+      Array.prototype.forEach.call(group.children, (child, i) => {
+        child.style.setProperty('--i', i);
+        // O container passa a controlar a entrada do filho. Remove o .reveal
+        // individual (e os delays d1/d2/d3) para não esconder o item duas vezes
+        // nem somar atrasos: o stagger é o único mecanismo aqui.
+        child.classList.remove('reveal', 'd1', 'd2', 'd3');
+      });
+    });
+  });
+
   /* ---- Reveal on scroll (scroll-based, no IntersectionObserver) ---- */
   document.documentElement.classList.add('anim');
   let revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
@@ -281,7 +305,7 @@
   checkReveal();
   window.addEventListener('scroll', checkReveal, { passive: true });
   window.addEventListener('resize', checkReveal);
-  // Safety net: never leave content hidden.
+  // Safety net: never leave content hidden (cobre .reveal e os grupos .stagger).
   setTimeout(() => { document.querySelectorAll('.reveal').forEach((e) => e.classList.add('is-visible')); }, 1800);
 
   /* ---- Scrollspy nav highlight (scroll-based) ---- */

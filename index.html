@@ -69,6 +69,10 @@
       content="https://waveops.com.br/assets/og-image.png"
     />
 
+    <!-- Preload das fontes críticas acima da dobra (corpo Hanken 400 + H1 Space Grotesk 600), antes do fonts.css. -->
+    <link rel="preload" href="assets/fonts/hankengrotesk-400-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/spacegrotesk-600-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+
     <!-- Fontes auto-hospedadas (item 3): sem chamada a fonts.googleapis/gstatic. -->
     <link rel="stylesheet" href="assets/fonts.css" />
     <link rel="stylesheet" href="assets/styles.css" />
@@ -100,7 +104,7 @@
       }
     </script>
 
-    <!-- ===== Analytics: Plausible (SPEC-02). Eventos custom (lead_form_submit, whatsapp_click, billing_toggle, checklist_download) no main.js. ===== -->
+    <!-- ===== Analytics: Plausible (SPEC-02). Eventos custom (lead_form_submit, whatsapp_click, billing_toggle) no main.js. ===== -->
     <!-- Privacy-friendly analytics by Plausible -->
     <script
       async
@@ -181,9 +185,13 @@
               <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
             </svg>
           </button>
-          <a href="#contato" class="btn btn-primary desktop"
-            >Falar com a gente</a
-          >
+          <!-- Integracao com o portal. "Assinar agora" rola ate a secao de planos
+               (#pacotes) desta pagina; os CTAs dos planos vao para o checkout do
+               portal (/checkout?plano=ID) e "Ja sou cliente" para /cliente/login.
+               Links raiz-relativos (mesma origem). Para subdominio, troque por
+               https://portal.waveops.com.br/checkout e /cliente/login. -->
+          <a href="/cliente/login" class="btn btn-ghost desktop">Já sou cliente</a>
+          <a href="#pacotes" class="btn btn-primary desktop">Assinar agora</a>
           <button
             class="icon-btn hamburger"
             id="hamburger"
@@ -225,9 +233,9 @@
       <a href="#pacotes">Pacotes</a>
       <a href="#publicos">Para quem é</a>
       <a href="#faq">FAQ</a>
-      <a href="#contato" class="btn btn-primary btn-block btn-lg"
-        >Falar com a gente</a
-      >
+      <a href="#pacotes" class="btn btn-primary btn-block btn-lg">Assinar agora</a>
+      <a href="/cliente/login" class="btn btn-ghost btn-block">Já sou cliente</a>
+      <a href="#contato" class="btn btn-ghost btn-block">Falar com a gente</a>
     </div>
 
     <main id="top">
@@ -844,7 +852,7 @@
           <!-- ===== (c) PLANO DE OPERAÇÃO: a gente mantém rodando ===== -->
           <div class="plans-block reveal">
             <div class="block-head">
-              <span class="eyebrow">Plano de operação · mensal</span>
+              <span class="eyebrow">Planos · sem fidelidade</span>
               <h3>A gente mantém rodando.</h3>
               <p class="lead">
                 Escolha pelo tamanho da operação. Sem fidelidade: você fica
@@ -894,11 +902,15 @@
                   <span class="v">R$327</span><span class="u">/mês</span>
                 </div>
                 <p class="bill-note" data-bill-note>cobrado R$3.924/ano</p>
-                <p class="plan-frame">Menos que o custo de 1 contratação para a mesma tarefa.</p>
+                <p class="plan-frame">Custa menos que manter essa tarefa no manual.</p>
                 <ul>
                   <li class="hot">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
                     Até 2 automações ativas
+                  </li>
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+                    1 número de WhatsApp incluso
                   </li>
                   <li>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
@@ -910,29 +922,30 @@
                   </li>
                   <li>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-                    Conserto quando a API quebra
+                    Conserto das integrações ativas
                   </li>
                   <li>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
                     Relatório mensal de valor em R$
                   </li>
                 </ul>
-                <a href="#contato" class="btn btn-ghost btn-block">Começar no Operação</a>
+                <p class="plan-note">Agente de IA a partir do Pro.</p>
+                <a href="/checkout?plano=operacao" class="btn btn-ghost btn-block">Assinar Operação</a>
               </article>
 
               <!-- Essencial -->
               <article
                 class="plan reveal d1"
-                data-m="497"
-                data-a="417"
-                data-at="5.004"
+                data-m="697"
+                data-a="577"
+                data-at="6.924"
               >
                 <h4 class="pname">Essencial</h4>
                 <div class="pprice">
-                  <span class="v">R$417</span><span class="u">/mês</span>
+                  <span class="v">R$577</span><span class="u">/mês</span>
                 </div>
-                <p class="bill-note" data-bill-note>cobrado R$5.004/ano</p>
-                <p class="plan-frame">Menos que o custo de 1 contratação para a mesma tarefa.</p>
+                <p class="bill-note" data-bill-note>cobrado R$6.924/ano</p>
+                <p class="plan-frame">Custa menos que manter essa tarefa no manual.</p>
                 <ul>
                   <li class="inherit">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
@@ -951,23 +964,24 @@
                     Suporte prioritário
                   </li>
                 </ul>
-                <a href="#contato" class="btn btn-ghost btn-block">Começar no Essencial</a>
+                <p class="plan-note">Agente de IA a partir do Pro.</p>
+                <a href="/checkout?plano=essencial" class="btn btn-ghost btn-block">Assinar Essencial</a>
               </article>
 
               <!-- Pro (único com selo) -->
               <article
                 class="plan featured reveal d2"
-                data-m="997"
-                data-a="827"
-                data-at="9.924"
+                data-m="1.297"
+                data-a="1.067"
+                data-at="12.804"
               >
                 <span class="ribbon">Mais escolhido</span>
                 <h4 class="pname">Pro</h4>
                 <div class="pprice">
-                  <span class="v">R$827</span><span class="u">/mês</span>
+                  <span class="v">R$1.067</span><span class="u">/mês</span>
                 </div>
-                <p class="bill-note" data-bill-note>cobrado R$9.924/ano</p>
-                <p class="plan-frame">Menos que o custo de 1 contratação para a mesma tarefa.</p>
+                <p class="bill-note" data-bill-note>cobrado R$12.804/ano</p>
+                <p class="plan-frame">Custa menos que manter essa tarefa no manual.</p>
                 <ul>
                   <li class="inherit">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
@@ -983,29 +997,33 @@
                   </li>
                   <li class="hot">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-                    Evolução contínua
+                    Agente de IA com LLM econômico incluso (até 10 mil chamadas por mês)
+                  </li>
+                  <li class="hot">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+                    Evolução contínua do que está no ar
                   </li>
                   <li class="hot">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
                     Revisão mensal de resultados
                   </li>
                 </ul>
-                <a href="#contato" class="btn btn-primary btn-block">Quero o Pro</a>
+                <a href="/checkout?plano=pro" class="btn btn-primary btn-block">Assinar Pro</a>
               </article>
 
-              <!-- Business -->
+              <!-- Empresarial -->
               <article
                 class="plan reveal d1"
-                data-m="1.997"
-                data-a="1.667"
-                data-at="20.004"
+                data-m="2.497"
+                data-a="2.097"
+                data-at="25.164"
               >
-                <h4 class="pname">Business</h4>
+                <h4 class="pname">Empresarial</h4>
                 <div class="pprice">
-                  <span class="v">R$1.667</span><span class="u">/mês</span>
+                  <span class="from">a partir de </span><span class="v">R$2.097</span><span class="u">/mês</span>
                 </div>
-                <p class="bill-note" data-bill-note>cobrado R$20.004/ano</p>
-                <p class="plan-frame">Menos que o custo de 1 contratação para a mesma tarefa.</p>
+                <p class="bill-note">Valor fechado na ativação.</p>
+                <p class="plan-frame">Custa menos que manter essa tarefa no manual.</p>
                 <ul>
                   <li class="inherit">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
@@ -1013,7 +1031,11 @@
                   </li>
                   <li class="hot">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
-                    Automações, sistemas e agentes ilimitados
+                    Automações, sistemas e agentes dimensionados com você
+                  </li>
+                  <li class="hot">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
+                    Múltiplos números de WhatsApp como canal dedicado
                   </li>
                   <li class="hot">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
@@ -1024,7 +1046,7 @@
                     Ponto de contato dedicado
                   </li>
                 </ul>
-                <a href="#contato" class="btn btn-ghost btn-block">Falar sobre o Business</a>
+                <a href="https://wa.me/5534991775784?text=Ol%C3%A1!%20Vim%20pela%20landing%20da%20WaveOps%20e%20quero%20falar%20sobre%20o%20plano%20Empresarial." target="_blank" rel="noopener" class="btn btn-ghost btn-block">Falar com a gente</a>
               </article>
             </div>
 
@@ -1032,6 +1054,54 @@
               Operação maior que isso?
               <a href="#contato">Falar com a gente</a>
             </p>
+            <p class="plans-fineprint">
+              Escopo, volume e prazos de cada plano são combinados na ativação.
+            </p>
+
+            <!-- ===== Add-ons sob demanda (a la carte) ===== -->
+            <div class="addons reveal">
+              <div class="block-head center">
+                <span class="eyebrow">Sob demanda</span>
+                <h3>Cresceu além do plano? Add-on transparente.</h3>
+                <p class="lead">
+                  Cada plano já inclui 1 número de WhatsApp. O que cresce com o seu
+                  uso fica em linha separada: você só paga pelo que usar, e a gente
+                  avisa antes.
+                </p>
+              </div>
+              <ul class="addons-grid">
+                <li>
+                  <strong>Número de WhatsApp extra</strong>
+                  <span>A partir de R$89/mês no canal oficial da Meta, ou R$149/mês em sessão Z-API.</span>
+                </li>
+                <li>
+                  <strong>Consumo de IA acima do incluso</strong>
+                  <span>A partir de R$169/mês por faixa de uso, dimensionada no briefing do projeto.</span>
+                </li>
+                <li>
+                  <strong>Disparo de marketing no WhatsApp</strong>
+                  <span>Saldo pré-pago, a partir de R$0,55 por mensagem. Atendimento ao cliente continua sem custo.</span>
+                </li>
+                <li>
+                  <strong>Automação adicional</strong>
+                  <span>R$110 a R$120/mês por automação além do limite do plano.</span>
+                </li>
+                <li>
+                  <strong>Sistema ou agente adicional</strong>
+                  <span>A partir de R$497/mês por unidade, além do que já vem no Pro.</span>
+                </li>
+                <li>
+                  <strong>Implantação sob medida</strong>
+                  <span>Taxa única. R$0 para manter o que já existe, a partir de R$697 para construir do zero.</span>
+                </li>
+              </ul>
+              <p class="addons-note">
+                Nada é ilimitado, e isso é proposital. Medimos o seu uso pelo padrão
+                normal dos últimos 30 dias. Se passar do plano de forma constante, a
+                gente mostra o número e propõe o add-on ou o upgrade antes de cobrar.
+                Sem surpresa na fatura.
+              </p>
+            </div>
           </div>
 
           <!-- ===== (d) O QUE ENTRA NO SEU PLANO TODO MÊS ===== -->
@@ -1047,7 +1117,7 @@
                 </span>
                 <div>
                   <h4>Infra rodando</h4>
-                  <p>A gente hospeda e mantém de pé. Você não cuida de servidor nem credencial.</p>
+                  <p>A gente hospeda e mantém de pé a infra das suas automações. Você não cuida de servidor nem credencial.</p>
                 </div>
               </li>
               <li class="included-item">
@@ -1064,8 +1134,8 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6 6 3 3 6-6a4 4 0 0 0 5.4-5.4l-2.3 2.3-2.1-.6-.6-2.1z" /></svg>
                 </span>
                 <div>
-                  <h4>Conserto incluso</h4>
-                  <p>Quando o WhatsApp, o CRM ou o pagamento mudam e quebram a integração, a gente arruma. Sem orçamento novo.</p>
+                  <h4>Conserto das integrações</h4>
+                  <p>Quando uma API que a gente mantém muda e quebra a integração, a correção está inclusa. Reconstruções grandes ou integrações novas entram como projeto à parte.</p>
                 </div>
               </li>
               <li class="included-item">
@@ -1074,7 +1144,7 @@
                 </span>
                 <div>
                   <h4>Evolução contínua</h4>
-                  <p>Sua operação não congela na entrega. A gente ajusta conforme o negócio muda.</p>
+                  <p>Sua operação não congela na entrega. A gente ajusta o que já está no ar dentro do seu plano. Projetos novos entram como uma evolução à parte.</p>
                 </div>
               </li>
               <li class="included-item">
