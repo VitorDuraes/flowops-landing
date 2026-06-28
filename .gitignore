@@ -24,5 +24,6 @@ node_modules/
 /package.json
 /package-lock.json
 
-# Artefato do build estatico da landing no Netlify (montado pelo netlify.toml).
-/_site/
+# Artefato do build estatico da landing no Netlify (montado pelo netlify.toml,
+# dentro de portal/ porque o base do site e "portal").
+_site/
